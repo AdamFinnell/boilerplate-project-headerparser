@@ -1,30 +1,43 @@
-// index.js
-// where your node app starts
-
-// init project
 require('dotenv').config();
-var express = require('express');
-var app = express();
+const express = require('express');
+const cors = require('cors');
+const app = express();
 
-// enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
-// so that your API is remotely testable by FCC
-var cors = require('cors');
-app.use(cors({ optionsSuccessStatus: 200 })); // some legacy browsers choke on 204
+// Enable CORS for FCC testing
+app.use(cors({ optionsSuccessStatus: 200 }));
 
-// http://expressjs.com/en/starter/static-files.html
+// Serve static files (e.g., style.css)
 app.use(express.static('public'));
 
-// http://expressjs.com/en/starter/basic-routing.html
-app.get('/', function (req, res) {
+// Serve HTML from views folder
+app.get('/', (req, res) => {
   res.sendFile(__dirname + '/views/index.html');
 });
 
-// your first API endpoint...
-app.get('/api/hello', function (req, res) {
+// Example endpoint
+app.get('/api/hello', (req, res) => {
   res.json({ greeting: 'hello API' });
 });
 
-// listen for requests :)
-var listener = app.listen(process.env.PORT || 3000, function () {
+// ✅ Your required endpoint
+app.get('/api/whoami', (req, res) => {
+  res.json({
+    ipaddress: req.headers['x-forwarded-for'] || req.ip,
+    language: req.headers['accept-language'],
+    software: req.headers['user-agent']
+  });
+});
+
+// Listen on the correct port
+const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port);
+});
+
+app.get('/api/whoami', (req, res) => {
+  res.json({
+    ipaddress: req.headers['x-forwarded-for'] || req.ip,
+    language: req.headers['accept-language'],
+    software: req.headers['user-agent'],
+    message: "Scouted by the Straw Hat crew 🏴‍☠️"
+  });
 });
